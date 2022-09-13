@@ -1,12 +1,23 @@
 <template>
     <el-space wrap>
-        <el-button type="primary" round>清空日志</el-button>
+        <el-button type="primary" round @click="clickClearLog">清空日志</el-button>
     </el-space>
 </template>
 <script>
+    import { reactive, ref, toRefs } from 'vue';
+    import { useStore } from 'vuex'
     export default {
         name:"bondage_buttons",
         setup(){
+            const store = useStore()
+
+            const clickClearLog=()=>{ // 清空日志
+                store.commit('changeTrainLog', `欢淫来到笨笨学园。\n`)
+            }
+
+            return {
+                clickClearLog,
+            }
         }
     }
 </script>

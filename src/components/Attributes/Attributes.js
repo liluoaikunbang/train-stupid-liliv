@@ -27,6 +27,7 @@ export const init_attributes = {
     favorability:50, // 对主人的好感
     state:['正常'], // 状态
     specialty:[''], // 特长
+    whereabouts: '', // 笨璃璃的去向，不在card里面显示，只为标识笨璃璃被安排的地方用于后续分类
     details:{ // 笨璃璃的详细信息
         lust:0, // 性欲
         pain_love:0, // 恋痛程度
@@ -81,7 +82,7 @@ export const init_attributes = {
 
 // 根据输入笨璃璃信息和条件进行判断，返回是否满足
 export function judgeFlag({
-    current_lili, flag_true=true, flag_false=false,
+    current_lili, flag_true=true, flag_false=false, need_state=null,
     pose_arm=null, pose_finger=null, pose_waist=null, pose_leg=null, pose_foot=null,
     bondage_eye=null, bondage_ear=null, bondage_nose=null, bondage_mouth=null, bondage_neck=null,
     bondage_arm=null, bondage_finger=null, bondage_waist=null, bondage_lap=null, bondage_shins=null, bondage_foot=null, bondage_toe=null,
@@ -100,6 +101,15 @@ export function judgeFlag({
             let min = input_bondage[0]
             let max = input_bondage[1]
             if(lili_bondage_value<min||lili_bondage_value>max){
+                flag = flag_false
+            }
+        }
+    }
+
+    // 判断是否含有需要的状态
+    if(need_state){
+        for(let i=0; i<need_state.length; i++){
+            if(!current_lili.state.includes(need_state[i])){
                 flag = flag_false
             }
         }

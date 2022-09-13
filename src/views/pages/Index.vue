@@ -2,12 +2,12 @@
     <div class="main">
         <img src="../../assets/background.jpg" class="background">
         <div class="content">
-            <h1 class="title">笨笨学园V0.1</h1>
+            <h1 class="title">笨笨学园V0.2</h1>
             <h1 class="author">作者：璃落</h1>
             <span class="input-content">
                 您的昵称为:
-                <input type="text" class="input" placeholder="请输入主人姓名" maxlength="5" v-model="uesr_name" @change="changeName">
-                <el-button round class="name-button">确定</el-button>
+                <input type="text" class="input" placeholder="请输入主人姓名" maxlength="8" v-model="uesr_name" @change="changeName">
+                <el-button round class="name-button" @click="$router.replace('/purchased')">确定</el-button>
             </span>
         </div>
     </div>
@@ -24,7 +24,6 @@ import { useStore } from 'vuex'
                 uesr_name:''
             })
 
-            // 跳过当天
             const changeName=()=>{
                 if(!data.uesr_name){
                     alert('主人姓名不能为空。')

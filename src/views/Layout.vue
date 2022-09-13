@@ -14,6 +14,7 @@
             <el-button type="primary" plain @click="$router.replace('/index')">回到首页</el-button>
             <el-button type="primary" plain @click="handleRestart()">重新开始</el-button>
             <el-button type="primary" plain @click="$router.replace('/help')">游戏帮助</el-button>
+            <el-button type="primary" plain @click="handleCode">游戏源码</el-button>
         </div>
       </el-header>
       <el-container>
@@ -124,6 +125,10 @@
             localStorage.removeItem('train_log')
             localStorage.removeItem('special_button_flags')
         }
+        // 游戏源码，跳转到指定页面
+        const handleCode=()=>{
+            window.open('https://github.com/liluoaikunbang/train-stupid-liliv')
+        }
 
         // 跳转，刷新，关闭页面前将更改过的内容在本地保存
         const handleSave=()=>{            
@@ -159,6 +164,7 @@
         return {
             ...toRefs(data), //toRefs函数让模板中直接使用data中的内容而不用加data.
             handleRestart,
+            handleCode,
         }
     }
   }

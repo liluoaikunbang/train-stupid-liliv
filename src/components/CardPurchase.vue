@@ -2,7 +2,7 @@
     <el-card style="width: 600px">
         <template #header>
             <div class="card-header">
-                <span>姓名：<input type="text" placeholder="请输入笨璃璃姓名" maxlength="5"  v-model="data.name"></span>
+                <span>姓名：<input type="text" placeholder="请输入笨璃璃姓名" maxlength="8"  v-model="data.name"></span>
                 <div>
                     <el-button type="success" class="button" @click="handleRefresh">刷新</el-button>
                     <el-button type="success" class="button" v-if="!flag.purchase" @click="handlePurchase">购买</el-button>

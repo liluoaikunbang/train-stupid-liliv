@@ -675,8 +675,8 @@
             const clickUntieAll=()=>{
                 store.commit('addTrainLog', `${name}给${current_lili.name}解开了全身所有的束缚。\n`)
                 current_lili = changeAttributes({input_lili:current_lili, delete_state:['捆绑', '宠物', '人鱼'],
-                    bondage_eye:0, bondage_ear:0, bondage_nose:0, bondage_mouth:0, bondage_neck:0, bondage_arm:0, bondage_finger:0,
-                    bondage_waist:0, bondage_lap:0, bondage_shins:0, bondage_foot:0, bondage_toe:0, 
+                    bondage_eye:-1000, bondage_ear:-1000, bondage_nose:-1000, bondage_mouth:-1000, bondage_neck:-1000, bondage_arm:-1000, bondage_finger:-1000,
+                    bondage_waist:-1000, bondage_lap:-1000, bondage_shins:-1000, bondage_foot:-1000, bondage_toe:-1000, 
                     pose_finger:'自由', pose_waist:'自由', pose_leg:'自由', pose_foot:'自由', pose_arm:'自由'})
                 special_bondage_flags = []
                 handleButtons()
