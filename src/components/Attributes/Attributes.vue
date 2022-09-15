@@ -4,20 +4,20 @@
             <el-row :gutter="20">
                 <el-col :span="50">年龄：{{ lili_item.age }}</el-col>
                 <el-col :span="50">身高：{{ lili_item.height }}cm</el-col>
-                <el-col :span="50">柔韧性：{{ lili_item.flexibility }}</el-col>
-            </el-row>
-            <el-row :gutter="20">
                 <el-col :span="50">智力：{{ lili_item.iq }}</el-col>
                 <el-col :span="50">罩杯：{{ lili_item.cups }}</el-col>
-                <el-col :span="50">乳汁分泌量：{{ lili_item.milk }}ml</el-col>
             </el-row>
             <el-row :gutter="20">
-                <el-col :span="50">奴性：{{ lili_item.servility }}%</el-col>
-                <el-col :span="50">健康程度：{{ lili_item.healthy }}%</el-col>
+                <el-col :span="50">乳汁分泌量：{{ lili_item.milk }}ml</el-col>
                 <el-col :span="50">璃汁分泌量：{{ lili_item.fluid }}ml</el-col>
             </el-row>
             <el-row :gutter="20">
-                <el-col :span="50">对主人好感：{{ lili_item.favorability }}%</el-col>
+                <el-col :span="50">奴性：{{ lili_item.servility }}%</el-col>
+                <el-col :span="50">好感度：{{ lili_item.favorability }}%</el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="50">性欲程度：{{ lili_item.lust }}%</el-col>
+                <el-col :span="50">健康程度：{{ lili_item.healthy }}%</el-col>
             </el-row>
             <el-row :gutter="20">
                 <el-col :span="150">状态：{{ lili_item.state.join() }}</el-col>
@@ -35,12 +35,17 @@
         <el-collapse accordion>
             <el-collapse-item title="其他信息" name="1">
                 <el-space wrap>
-                    <span>性欲：{{ lili_item.details.lust.toFixed(0) }}；</span>
-                    <span>恋痛程度：{{ lili_item.details.pain_love.toFixed(0) }}；</span>
-                    <span>抖M程度：{{ lili_item.details.sub_value.toFixed(0) }}；</span>
+                    <span>恋痛程度：{{ lili_item.details.pain_love }}；</span>
+                    <span>抖M程度：{{ lili_item.details.sub_value }}；</span>
                 </el-space>
             </el-collapse-item>
-            <el-collapse-item title="各部位姿势" name="2">
+            <el-collapse-item title="数值状态" name="2">
+                <el-space wrap>
+                    <span>胸部刺激等级：{{ lili_item.details.state_value.pleasure_breast }}；</span>
+                    <span>下体刺激等级：{{ lili_item.details.state_value.pleasure_vagina }}；</span>
+                </el-space>
+            </el-collapse-item>
+            <el-collapse-item title="各部位姿势" name="3">
                 <el-space wrap>
                     <span>手臂：{{ lili_item.details.pose.arm }}；</span>
                     <span>手指：{{ lili_item.details.pose.finger }}；</span>
@@ -49,7 +54,7 @@
                     <span>脚丫：{{ lili_item.details.pose.foot }}；</span>
                 </el-space>
             </el-collapse-item>
-            <el-collapse-item title="拘束值" name="3">
+            <el-collapse-item title="拘束值" name="4">
                 <el-space wrap>
                     <span>眼部拘束值：{{ lili_item.details.bondage_values.eye }}；</span>
                     <span>耳朵拘束值：{{ lili_item.details.bondage_values.ear }}；</span>
@@ -65,7 +70,7 @@
                     <span>脚趾拘束值：{{ lili_item.details.bondage_values.toe }}；</span>
                 </el-space>
             </el-collapse-item>
-            <el-collapse-item title="性器化程度" name="4">
+            <el-collapse-item title="性器化程度" name="5">
                 <el-space wrap>
                     <span>耳朵性器化：{{ lili_item.details.sexual.ear }}；</span>
                     <span>大腿性器化：{{ lili_item.details.sexual.lap }}；</span>
@@ -76,7 +81,7 @@
                     <span>下体性器化：{{ lili_item.details.sexual.vagina }}；</span>
                 </el-space>
             </el-collapse-item>
-            <el-collapse-item title="敏感度" name="5">
+            <el-collapse-item title="敏感度" name="6">
                 <el-space wrap>
                     <span>胸部敏感度：{{ lili_item.details.sensitivity.breast }}；</span>
                     <span>腋下敏感度：{{ lili_item.details.sensitivity.armpit }}；</span>
@@ -88,7 +93,7 @@
                     <span>脚心敏感度：{{ lili_item.details.sensitivity.foot }}；</span>
                 </el-space>
             </el-collapse-item>
-            <el-collapse-item title="礼仪值" name="6">
+            <el-collapse-item title="礼仪值" name="7">
                 <el-space wrap>
                     <span>淑女礼仪：{{ lili_item.details.manners.lady }}；</span>
                     <span>宠物礼仪：{{ lili_item.details.manners.pet }}；</span>
@@ -98,31 +103,8 @@
         </el-collapse>
     </div>
 
-    <div class="card-comment-content" v-if="lili_flag=='none'">
-        <el-row :gutter="20">
-            <el-col :span="50">年龄</el-col>
-            <el-col :span="50">身高</el-col>
-            <el-col :span="50">柔韧性</el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="50">智力</el-col>
-            <el-col :span="50">罩杯</el-col>
-            <el-col :span="50">乳汁分泌量</el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="50">奴性</el-col>
-            <el-col :span="50">健康程度</el-col>
-            <el-col :span="50">璃汁分泌量</el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="50">对主人好感</el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="150">状态</el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="150">特长</el-col>
-        </el-row>
+    <div class="card-comment-content-none" v-if="lili_flag=='none'">
+        <img class="none-image" src="../../assets/none_attributes.png" alt="">
     </div>
 </template>
 <script>
@@ -147,6 +129,13 @@
         overflow-y: auto;
         overflow-x: hidden;
     }
+    .card-comment-content-none {
+        margin-right: 0px;
+        height: 200px;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        text-align: center;
+    }
     .el-row {
         margin-bottom: 10px;
         font-size: 19px;
@@ -159,6 +148,9 @@
     }
     .card-image {
         width: 100%;
+        height: 100%;
+    }
+    .none-image {
         height: 100%;
     }
     :deep(.el-collapse) {

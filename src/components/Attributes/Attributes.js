@@ -1,10 +1,5 @@
 import { randomInt, arrayDelete } from '../../utils.js'
 
-// 返回随机等级的柔韧性
-export function randomFlexibility() {
-    return ['僵硬', '良好', '柔软'][randomInt(0, 2)]
-}
-
 // 返回随机等级的罩杯
 export function randomCpus() {
     return ['A', 'B', 'C', 'D', 'E'][randomInt(0, 4)]
@@ -13,25 +8,28 @@ export function randomCpus() {
 
 // 笨璃璃的初始化属性
 export const init_attributes = {
-    num:0, // 笨璃璃编号
+    num:1, // 笨璃璃编号
     name:'', // 姓名
     age:randomInt(19, 28), // 年龄
     height:randomInt(145, 175), // 身高
-    flexibility:randomFlexibility(), // 柔韧性
     iq:randomInt(-100, -1), // 智商
     cups:randomCpus(), // 罩杯
     milk:0, // 乳汁分泌量
     servility:0, // 奴性
     healthy:100, // 健康值
     fluid:5, // 璃汁分泌量
-    favorability:50, // 对主人的好感
+    favorability:50, // 好感度
+    lust:0, // 性欲
     state:['正常'], // 状态
     specialty:[''], // 特长
-    whereabouts: '', // 笨璃璃的去向，不在card里面显示，只为标识笨璃璃被安排的地方用于后续分类
+    whereabouts:'未派遣', // 笨璃璃的去向，不在card里面显示，只为标识笨璃璃被安排的地方用于后续分类
     details:{ // 笨璃璃的详细信息
-        lust:0, // 性欲
         pain_love:0, // 恋痛程度
         sub_value:50, // 抖m程度
+        state_value:{ // 数值状态
+            pleasure_breast:0, // 胸部刺激等级
+            pleasure_vagina:0, // 下体刺激等级
+        },
         pose:{ // 各部位姿势
             arm:'自由',
             finger:'自由',
@@ -82,10 +80,12 @@ export const init_attributes = {
 
 // 根据输入笨璃璃信息和条件进行判断，返回是否满足
 export function judgeFlag({
-    current_lili, flag_true=true, flag_false=false, need_state=null,
-    pose_arm=null, pose_finger=null, pose_waist=null, pose_leg=null, pose_foot=null,
-    bondage_eye=null, bondage_ear=null, bondage_nose=null, bondage_mouth=null, bondage_neck=null,
-    bondage_arm=null, bondage_finger=null, bondage_waist=null, bondage_lap=null, bondage_shins=null, bondage_foot=null, bondage_toe=null,
+    current_lili, flag_true=true, flag_false=false, need_state=[], stop_state=[],
+    healthy=[], lust=[],
+    pleasure_breast=[], pleasure_vagina=[],
+    pose_arm='', pose_finger='', pose_waist='', pose_leg='', pose_foot='',
+    bondage_eye=[], bondage_ear=[], bondage_nose=[], bondage_mouth=[], bondage_neck=[],
+    bondage_arm=[], bondage_finger=[], bondage_waist=[], bondage_lap=[], bondage_shins=[], bondage_foot=[], bondage_toe=[],
 }){
     let flag = flag_true
 
@@ -96,11 +96,11 @@ export function judgeFlag({
         }
     }
     // 判断当前属性数值是否在允许范围内
-    function judgeBondage(lili_bondage_value, input_bondage){
+    function judgeValue(lili_value, input_bondage){
         if(input_bondage){
             let min = input_bondage[0]
             let max = input_bondage[1]
-            if(lili_bondage_value<min||lili_bondage_value>max){
+            if(lili_value<min||lili_value>max){
                 flag = flag_false
             }
         }
@@ -114,26 +114,40 @@ export function judgeFlag({
             }
         }
     }
+    // 判断是否有禁止的状态
+    if(stop_state){
+        for(let i=0; i<stop_state.length; i++){
+            if(current_lili.state.includes(stop_state[i])){
+                flag = flag_false
+            }
+        }
+    }
 
     // 执行判断
+    judgeValue(current_lili.healthy, healthy)
+    judgeValue(current_lili.lust, lust)
+
+    judgeValue(current_lili.details.state_value.pleasure_breast, pleasure_breast)
+    judgeValue(current_lili.details.state_value.pleasure_vagina, pleasure_vagina)
+
     judgePose(current_lili.details.pose.arm, pose_arm)
     judgePose(current_lili.details.pose.finger, pose_finger)
     judgePose(current_lili.details.pose.waist, pose_waist)
     judgePose(current_lili.details.pose.leg, pose_leg)
     judgePose(current_lili.details.pose.foot, pose_foot)
 
-    judgeBondage(current_lili.details.bondage_values.eye, bondage_eye)
-    judgeBondage(current_lili.details.bondage_values.ear, bondage_ear)
-    judgeBondage(current_lili.details.bondage_values.nose, bondage_nose)
-    judgeBondage(current_lili.details.bondage_values.mouth, bondage_mouth)
-    judgeBondage(current_lili.details.bondage_values.neck, bondage_neck)
-    judgeBondage(current_lili.details.bondage_values.arm, bondage_arm)
-    judgeBondage(current_lili.details.bondage_values.finger, bondage_finger)
-    judgeBondage(current_lili.details.bondage_values.waist, bondage_waist)
-    judgeBondage(current_lili.details.bondage_values.lap, bondage_lap)
-    judgeBondage(current_lili.details.bondage_values.shins, bondage_shins)
-    judgeBondage(current_lili.details.bondage_values.foot, bondage_foot)
-    judgeBondage(current_lili.details.bondage_values.toe, bondage_toe)
+    judgeValue(current_lili.details.bondage_values.eye, bondage_eye)
+    judgeValue(current_lili.details.bondage_values.ear, bondage_ear)
+    judgeValue(current_lili.details.bondage_values.nose, bondage_nose)
+    judgeValue(current_lili.details.bondage_values.mouth, bondage_mouth)
+    judgeValue(current_lili.details.bondage_values.neck, bondage_neck)
+    judgeValue(current_lili.details.bondage_values.arm, bondage_arm)
+    judgeValue(current_lili.details.bondage_values.finger, bondage_finger)
+    judgeValue(current_lili.details.bondage_values.waist, bondage_waist)
+    judgeValue(current_lili.details.bondage_values.lap, bondage_lap)
+    judgeValue(current_lili.details.bondage_values.shins, bondage_shins)
+    judgeValue(current_lili.details.bondage_values.foot, bondage_foot)
+    judgeValue(current_lili.details.bondage_values.toe, bondage_toe)
 
     return flag
 }
@@ -142,8 +156,9 @@ export function judgeFlag({
 // 修改笨璃璃的属性
 export function changeAttributes({
     input_lili,
-    milk=0, servility=0, healthy=0, fluid=0, favorability=50, add_state=[], delete_state=[],
-    lust=0, pain_love=0, sub_value=0,
+    milk=0, servility=0, healthy=0, fluid=0, favorability=0, lust=0, add_state=[], delete_state=[],
+    pain_love=0, sub_value=0,
+    pleasure_breast=0, pleasure_vagina=0, 
     pose_arm='', pose_finger='', pose_waist='', pose_leg='', pose_foot='',
     bondage_eye=0, bondage_ear=0, bondage_nose=0, bondage_mouth=0, bondage_neck=0,
     bondage_arm=0, bondage_finger=0, bondage_waist=0, bondage_lap=0, bondage_shins=0, bondage_foot=0, bondage_toe=0,
@@ -177,7 +192,9 @@ export function changeAttributes({
     }
     // 删除笨璃璃的状态，在此自定义一些规则。
     function deleteState(state_array, item){
-        state_array = arrayDelete(state_array, item)
+        if(state_array.includes(item)){
+            state_array = arrayDelete(state_array, item)
+        }
         // 如果删除状态后状态栏为空，则添加基本状态“正常”
         if(state_array.length === 0){
             state_array.push('正常')
@@ -193,6 +210,7 @@ export function changeAttributes({
     current_lili.healthy = changeValue(current_lili.healthy, healthy, 0, Infinity)
     current_lili.fluid = changeValue(current_lili.fluid, fluid, 2, 20)
     current_lili.favorability = changeValue(current_lili.favorability, favorability, 0, 100)
+    current_lili.lust = changeValue(current_lili.lust, lust, 0, 100)
 
     // 执行状态更改
     for(let i=0; i<add_state.length; i++){
@@ -210,9 +228,11 @@ export function changeAttributes({
     if(pose_foot){current_lili.details.pose.foot = pose_foot}
 
     // 执行详细数值属性的更改
-    current_lili.details.lust = changeValue(current_lili.details.lust, lust, 0, 100)
     current_lili.details.pain_love = changeValue(current_lili.details.pain_love, pain_love, 0, 20)
     current_lili.details.sub_value = changeValue(current_lili.details.sub_value, sub_value, 50, 100)
+
+    current_lili.details.state_value.pleasure_breast = changeValue(current_lili.details.state_value.pleasure_breast, pleasure_breast, 0, 10)
+    current_lili.details.state_value.pleasure_vagina = changeValue(current_lili.details.state_value.pleasure_vagina, pleasure_vagina, 0, 10)
 
     current_lili.details.bondage_values.eye = changeValue(current_lili.details.bondage_values.eye, bondage_eye, 0, Infinity)
     current_lili.details.bondage_values.ear = changeValue(current_lili.details.bondage_values.ear, bondage_ear, 0, Infinity)

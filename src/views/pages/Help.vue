@@ -2,7 +2,7 @@
     <div>
         <p>global_data:{{ data.global_data }}</p>
         <p v-for="item in data.lilis" :key="item.num">lili{{ item.num }}:{{ item }}</p>
-        <p>train_log:{{ data.train_log }}</p>
+        <p>log:{{ data.log }}</p>
         <p>special_button_flags:{{ data.special_button_flags }}</p>
     </div>
 </template>
@@ -16,13 +16,13 @@
 
             const data = reactive({
                 global_data:{
-                    day:store.state.day,
+                    time:store.state.time,
                     money:store.state.money,
                     name:store.state.name,
                     current_id:store.state.current_id,
                 },
                 lilis:store.state.lilis,
-                train_log:store.state.train_log,
+                log:store.state.log,
                 special_button_flags:store.state.special_button_flags,
             })
 

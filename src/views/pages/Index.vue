@@ -15,6 +15,7 @@
 <script>
 import { reactive, toRefs } from 'vue';
 import { useStore } from 'vuex'
+import { ElMessageBox } from 'element-plus'
     export default {
         name:"index",
         setup(){
@@ -26,7 +27,7 @@ import { useStore } from 'vuex'
 
             const changeName=()=>{
                 if(!data.uesr_name){
-                    alert('主人姓名不能为空。')
+                    ElMessageBox.alert('主人的姓名不能为空，请先填写姓名。', '错误', {confirmButtonText: '好的'})
                     return
                 }
                 store.commit('changeName', data.uesr_name)

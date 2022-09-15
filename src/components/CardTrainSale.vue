@@ -13,14 +13,14 @@
     <el-card class="box-card" v-else>
         <template #header>
             <div class="card-header">
-                <span class="card-title">当前无笨璃璃，请先选择需要调教或安排的笨璃璃</span>
+                <span class="card-title">当前无选中的笨璃璃，请先从笨笨收容所中选择需要的笨璃璃</span>
             </div>
         </template>
         <Attributes :lili_flag="'none'" />
     </el-card>
 </template>
 <script>
-    import Attributes from './Attributes/Attributes.vue';
+    import Attributes from './Attributes/Attributes.vue'
     import { reactive, watch } from 'vue'
     import { useStore } from 'vuex'
     export default {
@@ -44,8 +44,8 @@
             }
 
             // 使用watch监测current_lili的变化，随时更新属性
-            watch(() => store.state.current_lili, (val, old) => {
-                lili_item = val
+            watch(() => store.state.day, (val, old) => {
+                console.log(val, old)
             })
 
             return {

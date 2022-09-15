@@ -5,14 +5,24 @@
         <div class="flex">
             <h1 class="title">笨笨学园</h1>
             <div class="title-information">
-                第{{ day }}天
-                金币:{{ money }}枚
+                <span class="information-content">
+                    <el-tooltip class="box-item" effect="light" placement="bottom">
+                        <template #content><p class="tooltip">因为主人也是要休息的，所以每日调教时间为12小时而不是24小时哦！</p></template>
+                        调教时间：{{ time.day }}天{{ time.hour }}小时{{ time.minute }}分钟
+                    </el-tooltip>
+                </span>
+                <span class="information-content">
+                    <el-tooltip class="box-item" effect="light" placement="bottom">
+                        <template #content><p class="tooltip">笨笨学园里面的通用货币，可以用于采摘笨璃璃，购买调教道具等，派遣笨璃璃去打工可以挣得大量球币哦！</p></template>
+                        球币:{{ money }}枚
+                    </el-tooltip>
+                </span>
             </div>
         </div>
         <div class="right">
             <p class="name">主人：{{ name }}</p>
             <el-button type="primary" plain @click="$router.replace('/index')">回到首页</el-button>
-            <el-button type="primary" plain @click="handleRestart()">重新开始</el-button>
+            <el-button type="primary" plain @click="handleRestart">重新开始</el-button>
             <el-button type="primary" plain @click="$router.replace('/help')">游戏帮助</el-button>
             <el-button type="primary" plain @click="handleCode">游戏源码</el-button>
         </div>
@@ -25,16 +35,19 @@
                 :router="true"
             >
                 <el-menu-item-group>
-                    <el-menu-item index="/purchased">购买笨璃璃</el-menu-item>
+                    <el-menu-item index="/purchased">笨笨生命树</el-menu-item>
                 </el-menu-item-group>
                 <el-menu-item-group>
-                    <el-menu-item index="/existed">已有笨璃璃</el-menu-item>
+                    <el-menu-item index="/existed">笨笨收容所</el-menu-item>
                 </el-menu-item-group>
                 <el-menu-item-group>
-                    <el-menu-item index="/trained">调教笨璃璃</el-menu-item>
+                    <el-menu-item index="/trained">笨笨调教室</el-menu-item>
                 </el-menu-item-group>
                 <el-menu-item-group>
-                    <el-menu-item index="/sold">派遣笨璃璃</el-menu-item>
+                    <el-menu-item index="/sold">笨笨派遣处</el-menu-item>
+                </el-menu-item-group>
+                <el-menu-item-group>
+                    <el-menu-item>笨笨商业街</el-menu-item>
                 </el-menu-item-group>
             </el-menu>
         </el-aside>
@@ -48,62 +61,30 @@
 <script>
   import { reactive, toRefs, watch } from 'vue';
   import { useStore } from 'vuex'
+  import { useRouter } from 'vue-router'
   import { onBeforeRouteUpdate } from 'vue-router';
-  import { getCurrentLiLi } from '../utils'
+  import { deleteArchive, saveArchive, loadArchive } from './Archive'
   export default{
     name:"home",
     setup() {
         const store = useStore()
+        const router = useRouter()
 
         const data = reactive({
-            day:store.state.day,
+            time:store.state.time,
             money:store.state.money,
             name:store.state.name,
-            lilis:store.state.lilis,
-            current_id:store.state.current_id,
-            current_lili:store.state.current_lili,
-            train_log:store.state.train_log,
-            special_button_flags:store.state.special_button_flags,
-            train_display:store.state.train_display, // 不保存localstage
         })
 
-        console.log('初始化全局数据')
-        if(localStorage.getItem('day')){
-            data.day = JSON.parse(localStorage.getItem('day'))
-            store.commit('changeDay', data.day)
-        }
-        if(localStorage.getItem('money')){
-            data.money = JSON.parse(localStorage.getItem('money'))
-            store.commit('changeMoney', data.money)
-        }
-        if(localStorage.getItem('name')){
-            data.name = localStorage.getItem('name')
-            store.commit('changeName', data.name)
-        }
-        if(localStorage.getItem('lilis')){
-            data.lilis = JSON.parse(localStorage.getItem('lilis'))
-            store.commit('changeLiLis', data.lilis)
-        }
-        if(localStorage.getItem('current_id')){
-            data.current_id = JSON.parse(localStorage.getItem('current_id'))
-            store.commit('changeCurrentId', data.current_id)
-        }
-        if(localStorage.getItem('current_lili')){
-            data.current_lili = JSON.parse(localStorage.getItem('current_lili'))
-            store.commit('changeCurrentLiLi', data.current_lili)
-        }
-        if(localStorage.getItem('train_log')){
-            data.train_log = localStorage.getItem('train_log')
-            store.commit('changeTrainLog', data.train_log)
-        }
-        if(localStorage.getItem('special_button_flags')){
-            data.special_button_flags = JSON.parse(localStorage.getItem('special_button_flags'))
-            store.commit('changeSpecialButtonFlags', data.special_button_flags)
-        }
+        // 读档并初始化数据
+        loadArchive()
+        data.time = store.state.time
+        data.money = store.state.money
+        data.name = store.state.name
 
         // 监听全局属性变化，随时更改页面中全局数据的值
-        watch(() => store.state.day, (val, old) => {
-            data.day = val
+        watch(() => store.state.time, (val, old) => {
+            data.time = val
         })
         watch(() => store.state.money, (val, old) => {
             data.money = val
@@ -114,52 +95,24 @@
 
         // 重新开始。清除本地信息并刷新页面
         const handleRestart=()=>{
-            // 需要先刷新再清空本地，防止子页面在刷新前保存导致删除失败。
-            location.reload()
-            localStorage.removeItem('day')
-            localStorage.removeItem('money')
-            localStorage.removeItem('name')
-            localStorage.removeItem('lilis')
-            localStorage.removeItem('current_id')
-            localStorage.removeItem('current_lili')
-            localStorage.removeItem('train_log')
-            localStorage.removeItem('special_button_flags')
+            router.push('/index')
+            store.commit('restartState')
+            deleteArchive()
         }
         // 游戏源码，跳转到指定页面
         const handleCode=()=>{
             window.open('https://github.com/liluoaikunbang/train-stupid-liliv')
         }
 
-        // 跳转，刷新，关闭页面前将更改过的内容在本地保存
-        const handleSave=()=>{            
-            console.log("更新页面中。Layout.vue正在保存变量到本地。")
-
-            // 如果当前存在被调教的笨璃璃，则替换本地对应的笨璃璃信息。
-            if(store.state.current_id!=null){
-                let lilis = store.state.lilis
-                lilis[getCurrentLiLi(lilis, store.state.current_id)] = store.state.current_lili
-                store.commit('changeLiLis', lilis)
-            }
-
-            // 保存信息
-            localStorage.setItem('day', JSON.stringify(store.state.day))
-            localStorage.setItem('money', JSON.stringify(store.state.money))
-            localStorage.setItem('name', store.state.name)
-            localStorage.setItem('lilis', JSON.stringify(store.state.lilis))
-            localStorage.setItem('current_id', JSON.stringify(store.state.current_id))
-            localStorage.setItem('current_lili', JSON.stringify(store.state.current_lili))
-            localStorage.setItem('train_log', store.state.train_log)
-            localStorage.setItem('special_button_flags', JSON.stringify(store.state.special_button_flags))
-        }
-        // 跳转页面前（使用路由守卫实现）
+        // 跳转页面前存档（使用路由守卫实现）
         onBeforeRouteUpdate((to) => {
-            handleSave()
-        });
-        // 刷新，关闭页面前
+            saveArchive()
+        })
+        // 刷新，关闭页面前存档
         window.onbeforeunload = e => {
-            handleSave()
+            saveArchive()
             // return '' // 加入这句则会在页面刷新前弹出提示
-        };
+        }
 
         return {
             ...toRefs(data), //toRefs函数让模板中直接使用data中的内容而不用加data.
@@ -204,6 +157,9 @@
         color: white;
         font-size: 20px;
     }
+    .information-content{
+        margin-right: 15px;
+    }
     .el-menu-item {
         font-size: 20px;
     }
@@ -216,5 +172,8 @@
         color: white;
         font-size: 20px;
         margin-right: 30px;
+    }
+    .tooltip{
+        font-size: 15px;
     }
 </style>

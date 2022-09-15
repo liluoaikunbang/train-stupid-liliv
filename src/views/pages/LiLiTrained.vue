@@ -40,6 +40,7 @@
     import { reactive, watch } from 'vue';
     import { useStore } from 'vuex'
     import { addLog } from '../../utils'
+    import { handleNextHourEvents, handleNextDayEvents } from '../Events'
     import CardTrainSale from '../../components/CardTrainSale.vue'
     import BondageButtons from '../../components/LiLiTrainedButtons/BondageButtons.vue';
     import IndoorTrainButtons from '../../components/LiLiTrainedButtons/IndoorTrainButtons.vue';
@@ -64,7 +65,7 @@
                 train_flag:'bondage', // 当前显示的按钮组
             })
             const train_log = reactive({
-                log:'欢淫来到笨笨学园！',
+                log:store.state.log,
             })
 
             const current_id = store.state.current_id
@@ -89,14 +90,28 @@
             // 初始化过程
             if(current_id!=null){ // 如果current_id不为null，则有笨璃璃，train_flag设置为true，并进行展示
                 flags.train_flag = 'bondage'
-
                 console.log(`${current_id}号笨璃璃正在被调教。`)
-                store.commit('changeTrainLog', addLog(store.state.train_log, `${current_id}号笨璃璃正在被调教。`))
-                train_log.log = store.state.train_log
+                store.commit('changeLog', addLog(store.state.log, `${current_id}号笨璃璃正在被调教。`))
+                train_log.log = store.state.log
             }
 
-            // 使用watch监测train_log的变化，随时更新日志
-            watch(() => store.state.train_log, (val, old) => {
+
+            // 监听全局time的变化，触发事件，因为可能存在一次度过多个小时的行为，使用循环判定
+            watch(() => store.state.time, (val, old) => {
+                let gap_day = val.day - old.day
+                let gap_hour = val.hour - old.hour + gap_day*12
+                // 事件判定
+                if(gap_hour>=1){
+                    for(let i=0; i<gap_hour; i++){ // 小时判定
+                        handleNextHourEvents()
+                    }
+                }
+                if(gap_day>=1){
+                    handleNextDayEvents() // 天数判定
+                }
+            })
+            // 监听train_log的变化，随时更新日志
+            watch(() => store.state.log, (val, old) => {
                 train_log.log = val
                 // 日志栏默认到底
                 var log_area = document.getElementById('log_area')

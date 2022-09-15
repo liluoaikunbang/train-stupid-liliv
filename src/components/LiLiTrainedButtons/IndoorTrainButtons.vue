@@ -108,6 +108,7 @@
     import { reactive, ref, toRefs } from 'vue';
     import { useStore } from 'vuex'
     import { judgeFlag, changeAttributes } from '../Attributes/Attributes'
+    import { handleInstantEvents } from '../../views/Events'
     export default {
         name:"indoor_train_buttons",
         setup(){
@@ -198,6 +199,7 @@
             const handleButtons=()=>{
                 handleFlags()
                 store.commit('changeCurrentLiLi', current_lili)
+                handleInstantEvents()
             }
             
             // 抚摸类调教
@@ -206,7 +208,8 @@
             }
 
             const clickTorchHead=()=>{ // 摸头
-                store.commit('addTrainLog', `${name}摸了摸${current_lili.name}的头，${current_lili.name}蹭了蹭主人表示回应。\n`)
+                store.commit('addLog', `${name}摸了摸${current_lili.name}的头，${current_lili.name}蹭了蹭主人表示回应。\n`)
+                store.commit('addMinute', 2)
                 current_lili = changeAttributes({input_lili:current_lili, servility:2, favorability:5})
                 if(current_lili.state.includes('捆绑')){
                     current_lili = changeAttributes({input_lili:current_lili, servility:2, favorability:5})
@@ -215,8 +218,9 @@
             }
 
             const clickTorchBreast=()=>{ // 摸胸
-                store.commit('addTrainLog', `${name}摸了摸${current_lili.name}的胸胸，${current_lili.name}有些害羞地躲开了。\n`)
-                current_lili = changeAttributes({input_lili:current_lili, servility:3, favorability:5})
+                store.commit('addLog', `${name}摸了摸${current_lili.name}的胸胸，${current_lili.name}有些害羞地躲开了。\n`)
+                store.commit('addMinute', 5)
+                current_lili = changeAttributes({input_lili:current_lili, delete_state:['胀奶'], servility:3, favorability:5})
                 if(current_lili.state.includes('捆绑')){
                     current_lili = changeAttributes({input_lili:current_lili, servility:3, favorability:5})
                 }
@@ -227,7 +231,8 @@
             }
 
             const clickTorchVagina=()=>{ // 摸下体
-                store.commit('addTrainLog', `${name}摸了摸${current_lili.name}的下面，${current_lili.name}的性欲增加了。\n`)
+                store.commit('addLog', `${name}摸了摸${current_lili.name}的下面，${current_lili.name}的性欲增加了。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:5, lust:5})
                 if(current_lili.state.includes('捆绑')){
                     current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:5, lust:5})
@@ -236,7 +241,8 @@
             }
 
             const clickTorchEar=()=>{ // 耳尖吹气
-                store.commit('addTrainLog', `${name}在${current_lili.name}的耳边轻轻吹气，${current_lili.name}的耳尖很快变红了。\n`)
+                store.commit('addLog', `${name}在${current_lili.name}的耳边轻轻吹气，${current_lili.name}的耳尖很快变红了。\n`)
+                store.commit('addMinute', 2)
                 current_lili = changeAttributes({input_lili:current_lili, lust:5})
                 if(current_lili.state.includes('捆绑')){
                     current_lili = changeAttributes({input_lili:current_lili, lust:5})
@@ -253,31 +259,36 @@
             }
 
             const clickWhipButt=()=>{ // 打屁股
-                store.commit('addTrainLog', `${name}抽打了一番${current_lili.name}，${current_lili.name}的小屁屁很快变红。\n`)
+                store.commit('addLog', `${name}抽打了一番${current_lili.name}，${current_lili.name}的小屁屁很快变红。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-5, lust:-5})
                 handleWhip()
             }
 
             const clickWhipBreast=()=>{ // 打胸胸
-                store.commit('addTrainLog', `${name}抽打了一番${current_lili.name}的胸胸，${current_lili.name}吃痛躲开。\n`)
+                store.commit('addLog', `${name}抽打了一番${current_lili.name}的胸胸，${current_lili.name}吃痛躲开。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-5, lust:-10})
                 handleWhip()
             }
 
             const clickWhipHand=()=>{ // 打手心 
-                store.commit('addTrainLog', `${name}抽打了一番${current_lili.name}的手心，${current_lili.name}缩回了手。\n`)
+                store.commit('addLog', `${name}抽打了一番${current_lili.name}的手心，${current_lili.name}缩回了手。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:3, favorability:-3, lust:-5})
                 handleWhip()
             }
 
             const clickWhipFoot=()=>{ // 打脚心
-                store.commit('addTrainLog', `${name}抽打了一番${current_lili.name}的脚心，${current_lili.name}痛呼出声。\n`)
+                store.commit('addLog', `${name}抽打了一番${current_lili.name}的脚心，${current_lili.name}痛呼出声。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-5, lust:-5})
                 handleWhip()
             }
 
             const clickWhipVagina=()=>{ // 打下体
-                store.commit('addTrainLog', `${name}抽打了一番${current_lili.name}的下体，${current_lili.name}的性欲大幅度下降了。\n`)
+                store.commit('addLog', `${name}抽打了一番${current_lili.name}的下体，${current_lili.name}的性欲大幅度下降了。\n`)
+                store.commit('addMinute', 5)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-10, lust:-20})
                 handleWhip()
             }
@@ -291,19 +302,22 @@
             }
             
             const clickElectricLap=()=>{ // 电大腿
-                store.commit('addTrainLog', `${name}将电击贴片贴在${current_lili.name}的大腿，并打开了电击器。\n`)
+                store.commit('addLog', `${name}将电击贴片贴在${current_lili.name}的大腿，并打开了电击器。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-5, lust:-5})
                 handleElectric()
             }
 
             const clickElectricFoot=()=>{ // 电脚心
-                store.commit('addTrainLog', `${name}将电击贴片贴在${current_lili.name}的脚心，并打开了电击器。\n`)
+                store.commit('addLog', `${name}将电击贴片贴在${current_lili.name}的脚心，并打开了电击器。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-5, lust:-5})
                 handleElectric()
             }
 
             const clickElectricVagina=()=>{ // 体内电击
-                store.commit('addTrainLog', `${name}将电击棒插入了${current_lili.name}的下体，并打开了电击器。\n`)
+                store.commit('addLog', `${name}将电击棒插入了${current_lili.name}的下体，并打开了电击器。\n`)
+                store.commit('addMinute', 5)
                 current_lili = changeAttributes({input_lili:current_lili, servility:-10, favorability:-20, lust:-50})
                 handleElectric()
             }
@@ -314,19 +328,22 @@
             }
 
             const clickSexStop=()=>{ // 寸止
-                store.commit('addTrainLog', `${name}将震动棒贴在${current_lili.name}下体，并在${current_lili.name}即将高潮时移开了震动棒。\n`)
+                store.commit('addLog', `${name}将震动棒贴在${current_lili.name}下体，并在${current_lili.name}即将高潮时移开了震动棒。\n`)
+                store.commit('addMinute', 30)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:-5, lust:20})
                 handleSex()
             }
 
             const clickSexOrgasm=()=>{ // 强高
-                store.commit('addTrainLog', `${name}将震动棒贴在${current_lili.name}下体，${current_lili.name}很快达到了高潮。\n`)
+                store.commit('addLog', `${name}将震动棒贴在${current_lili.name}下体，${current_lili.name}很快达到了高潮。\n`)
+                store.commit('addMinute', 30)
                 current_lili = changeAttributes({input_lili:current_lili, servility:10, favorability:10, lust:-100})
                 handleSex()
             }
 
             const clickSexWalkRope=()=>{ // 走绳
-                store.commit('addTrainLog', `${name}将${current_lili.name}固定在一根布满绳结的粗麻绳上，并强迫${current_lili.name}来回走动。\n`)
+                store.commit('addLog', `${name}将${current_lili.name}固定在一根布满绳结的粗麻绳上，并强迫${current_lili.name}来回走动。\n`)
+                store.commit('addMinute', 60)
                 current_lili = changeAttributes({input_lili:current_lili, servility:10, lust:10})
                 handleSex()
             }
@@ -341,7 +358,8 @@
             }
 
             const clickTkFoot=()=>{ // 挠脚心
-                store.commit('addTrainLog', `${name}挠了挠${current_lili.name}的脚心，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addLog', `${name}挠了挠${current_lili.name}的脚心，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addMinute', 20)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5})
                 handleTk()
             }
@@ -349,19 +367,22 @@
             // 挠脚趾，需要道具，暂时不开放
 
             const clickTkArmpit=()=>{ // 挠腋窝
-                store.commit('addTrainLog', `${name}挠了挠${current_lili.name}的腋窝，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addLog', `${name}挠了挠${current_lili.name}的腋窝，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addMinute', 20)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5})
                 handleTk()
             }
 
             const clickTkLap=()=>{ // 挠大腿
-                store.commit('addTrainLog', `${name}挠了挠${current_lili.name}的大腿，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addLog', `${name}挠了挠${current_lili.name}的大腿，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addMinute', 20)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5})
                 handleTk()
             }
 
             const clickTkCostal=()=>{ // 数肋骨
-                store.commit('addTrainLog', `${name}戳了戳${current_lili.name}的肋下，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addLog', `${name}戳了戳${current_lili.name}的肋下，${current_lili.name}发出银铃般的笑声。\n`)
+                store.commit('addMinute', 20)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5})
                 handleTk()
             }
@@ -375,13 +396,15 @@
             }
 
             const clickSmellSocks=()=>{ // 闻袜子
-                store.commit('addTrainLog', `${name}将臭袜子固定在${current_lili.name}的鼻尖，强迫${current_lili.name}呼吸酸臭的气味。\n`)
+                store.commit('addLog', `${name}将臭袜子固定在${current_lili.name}的鼻尖，强迫${current_lili.name}呼吸酸臭的气味。\n`)
+                store.commit('addMinute', 20)
                 current_lili = changeAttributes({input_lili:current_lili, servility:10})
                 handleSmell()
             }
 
             const clickSmellPanties=()=>{ // 闻内裤
-                store.commit('addTrainLog', `${name}将胖次固定在${current_lili.name}的鼻尖，强迫${current_lili.name}呼吸酸臭的气味。\n`)
+                store.commit('addLog', `${name}将胖次固定在${current_lili.name}的鼻尖，强迫${current_lili.name}呼吸酸臭的气味。\n`)
+                store.commit('addMinute', 10)
                 current_lili = changeAttributes({input_lili:current_lili, servility:10})
                 handleSmell()
             }

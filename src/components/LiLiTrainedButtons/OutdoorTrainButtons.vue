@@ -30,6 +30,7 @@
     import { reactive, ref, toRefs } from 'vue';
     import { useStore } from 'vuex'
     import { judgeFlag, changeAttributes } from '../Attributes/Attributes'
+    import { handleInstantEvents } from '../../views/Events'
     export default {
         name:"outdoor_train_buttons",
         setup(){
@@ -69,40 +70,47 @@
             const handleButtons=()=>{
                 handleFlags()
                 store.commit('changeCurrentLiLi', current_lili)
+                handleInstantEvents()
             }
 
-            const clickExposure=()=>{
-                store.commit('addTrainLog', `${name}将${current_lili.name}捆绑好后强行牵到了外面，让${current_lili.name}带着满身拘束暴露在人群中。\n`)
+            const clickExposure=()=>{ // 拘束露出
+                store.commit('addLog', `${name}将${current_lili.name}捆绑好后强行牵到了外面，让${current_lili.name}带着满身拘束暴露在人群中。\n`)
+                store.commit('addHour', 1)
                 current_lili = changeAttributes({input_lili:current_lili, servility:10, favorability:-5})
                 handleButtons()
             }
 
-            const clickDisguise=()=>{
-                store.commit('addTrainLog', `${name}将${current_lili.name}捆绑好后强行牵到了外面，但在她身上披了一件衣服，挡住了全身的拘束。\n`)
+            const clickDisguise=()=>{ // 伪装拘束
+                store.commit('addLog', `${name}将${current_lili.name}捆绑好后强行牵到了外面，但在她身上披了一件衣服，挡住了全身的拘束。\n`)
+                store.commit('addHour', 1)
                 current_lili = changeAttributes({input_lili:current_lili, servility:5, favorability:5})
                 handleButtons()
             }
 
-            const clickWalk=()=>{
-                store.commit('addTrainLog', `${name}将${current_lili.name}捆绑好后牵到了院子里快步走了几圈。\n`)
+            const clickWalk=()=>{ // 步行训练
+                store.commit('addLog', `${name}将${current_lili.name}捆绑好后牵到了院子里快步走了几圈。\n`)
+                store.commit('addHour', 1)
                 current_lili = changeAttributes({input_lili:current_lili, sen_foot:-1, manners_lady:2})
                 handleButtons()
             }
 
-            const clickSwim=()=>{
-                store.commit('addTrainLog', `${name}将${current_lili.name}捆绑好后牵到了后院游泳池中。\n`)
+            const clickSwim=()=>{ // 游泳训练
+                store.commit('addLog', `${name}将${current_lili.name}捆绑好后牵到了后院游泳池中。\n`)
+                store.commit('addMinute', 40)
                 current_lili = changeAttributes({input_lili:current_lili, manners_mermaid:2, manners_lady:2})
                 handleButtons()
             }
 
-            const clickPlaceCommon=()=>{
-                store.commit('addTrainLog', `${name}将${current_lili.name}捆绑完全后放置在院子中。\n`)
+            const clickPlaceCommon=()=>{ // 普通拘束放置
+                store.commit('addLog', `${name}将${current_lili.name}捆绑完全后放置在院子中。\n`)
+                store.commit('addHour', 1)
                 current_lili = changeAttributes({input_lili:current_lili, servility:10, favorability:-5})
                 handleButtons()
             }
 
-            const clickPlaceSensory=()=>{
-                store.commit('addTrainLog', `${name}将${current_lili.name}捆绑完全感官封闭后放置在院子中。\n`)
+            const clickPlaceSensory=()=>{ // 感官封闭放置
+                store.commit('addLog', `${name}将${current_lili.name}捆绑完全感官封闭后放置在院子中。\n`)
+                store.commit('addHour', 1)
                 current_lili = changeAttributes({input_lili:current_lili, servility:15, favorability:-10})
                 handleButtons()
             }

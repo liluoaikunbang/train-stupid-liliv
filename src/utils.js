@@ -18,6 +18,15 @@ export function arrayDelete(array, item){
     return array
 }
 
+// 字典循环key赋值，防止直接赋值导致的指针错误
+export function assignObject(old_object){
+    let new_object = {}
+    for(let key in old_object){
+        new_object[key] = old_object[key]
+    }
+    return new_object
+}
+
 // 返回[min, max]的随机整数
 export function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min
@@ -60,4 +69,6 @@ export function addLog(log, message){
     }
     return log
 }
+
+
 

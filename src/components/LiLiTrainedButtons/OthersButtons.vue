@@ -1,5 +1,6 @@
 <template>
     <el-space wrap>
+        <!-- <el-button type="primary" round @click="clickNextDay">跳过当天</el-button> -->
         <el-button type="primary" round @click="clickClearLog">清空日志</el-button>
     </el-space>
 </template>
@@ -11,11 +12,15 @@
         setup(){
             const store = useStore()
 
+            const clickNextDay=()=>{ // 跳过当天
+                store.commit('changeHour', store.state.time.hour+12)
+            }
             const clickClearLog=()=>{ // 清空日志
-                store.commit('changeTrainLog', `欢淫来到笨笨学园。\n`)
+                store.commit('changeLog', `欢淫来到笨笨学园。\n`)
             }
 
             return {
+                clickNextDay,
                 clickClearLog,
             }
         }

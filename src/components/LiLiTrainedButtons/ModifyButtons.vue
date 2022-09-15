@@ -8,6 +8,7 @@
     import { reactive, ref, toRefs } from 'vue';
     import { useStore } from 'vuex'
     import { judgeFlag, changeAttributes } from '../Attributes/Attributes'
+    import { handleInstantEvents } from '../../views/Events'
     export default {
         name:"modify_buttons",
         setup(){
@@ -21,7 +22,7 @@
 
             // 改变按钮状态
             const handleFlags=()=>{
-                flags.prolactin_flag = judgeFlag({current_lili:current_lili, pose_arm:[10, Infinity], pose_waist:['自由', '竖直', '后仰']})
+                flags.prolactin_flag = judgeFlag({current_lili:current_lili, stop_state:['泌乳'], pose_arm:[10, Infinity], pose_waist:['自由', '竖直', '后仰']})
             }
 
             // 初始化数据与状态
@@ -32,11 +33,13 @@
             const handleButtons=()=>{
                 handleFlags()
                 store.commit('changeCurrentLiLi', current_lili)
+                handleInstantEvents()
             }
 
             const clickProlactin=()=>{
-                store.commit('addTrainLog', `${name}为${current_lili.name}注入催乳剂，${current_lili.name}开始泌乳。\n`)
-                current_lili = changeAttributes({input_lili:current_lili, add_state:['泌乳', '涨奶']})
+                store.commit('addLog', `${name}为${current_lili.name}注入催乳剂，${current_lili.name}开始泌乳。\n`)
+                store.commit('addMinute', 30)
+                current_lili = changeAttributes({input_lili:current_lili, add_state:['泌乳', '胀奶']})
                 handleButtons()
             }
             
