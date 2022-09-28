@@ -38,6 +38,11 @@ const routes = [
         name:"help",
         component:()=>import("../views/pages/Help.vue")
       },
+      {
+        path:"/ending",
+        name:"ending",
+        component:()=>import("../views/pages/LiLiEnding.vue")
+      },
     ]
   },
 ]

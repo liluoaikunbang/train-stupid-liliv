@@ -1,8 +1,7 @@
 <template>
     <div class="main">
-        <img src="../../assets/background.jpg" class="background">
         <div class="content">
-            <h1 class="title">笨笨学园V0.2</h1>
+            <h1 class="title">笨笨学园V0.3</h1>
             <h1 class="author">作者：璃落</h1>
             <span class="input-content">
                 您的昵称为:
@@ -13,14 +12,13 @@
     </div>
 </template>
 <script>
-import { reactive, toRefs } from 'vue';
+import { reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
 import { ElMessageBox } from 'element-plus'
     export default {
         name:"index",
         setup(){
             const store = useStore()
-
             const data = reactive({
                 uesr_name:''
             })
@@ -46,14 +44,6 @@ import { ElMessageBox } from 'element-plus'
         height: 95vh;
         margin: 0;
         /* overflow: hidden; */
-    }
-    .background{
-        width: 100%;
-        height: 100%;
-        opacity: 0.4;
-        /* 背景置于底层 */
-        position: absolute;
-        z-index: 1;
     }
     .content{
         position: fixed;

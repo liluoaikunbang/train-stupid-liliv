@@ -1,16 +1,24 @@
+import store from './store/index'
+import { ElMessageBox } from 'element-plus'
+
 // 超参数存放
 export const hyperParameters = {
     max_lili:4, // 最多同时拥有的笨璃璃个数
     max_purchase_lili:4, // 售卖笨璃璃页面同时展示的笨璃璃个数
 }
 
-// 给数组中添加元素，并返回新数组
+// 给数组中添加元素，且如果重复就不添加
 export function arrayAdd(array, item){
-    let new_array = array.push(item)
-    return new_array
+    if(array.includes(item)){
+        return array
+    }
+    else{
+        array.push(item)
+        return array
+    }
 }
 
-// 从数组中删除指定元素
+// 从数组中删除指定元素，如果没有则返回原数组
 export function arrayDelete(array, item){
     array = array.filter(function(element) {
         return element != item
@@ -61,13 +69,34 @@ export function sortLiLis(list, current_id) {
     return list
 }
 
-// 向日志中添加信息，但需要先确保与上一条信息不重复
-export function addLog(log, message){
-    const log_array = log.split('\n')
-    if(message != log_array[log_array.length - 2]){ // 因为通过\n进行分割，数组中最后一个元素为空，倒数第二个元素才是需要比较的
-        log += message + '\n'
+// 修改全局变量中的lilis
+export function changeLiLisState(lili_num, lili_item){
+    let lilis = store.state.lilis
+    lilis[getCurrentLiLi(lilis, lili_num)] = lili_item
+    store.commit('changeLiLis', lilis)
+}
+
+// 增加或减少金币，并自定义边界值
+export function addMoney(add_money){
+    let money = store.state.money + add_money
+    if(money < 0){
+        ElMessageBox.alert('金币不足！', '错误', {confirmButtonText: '好的'})
+        return false
+    } else{
+        store.commit('changeMoney', money)
+        return true
     }
-    return log
+}
+
+
+// 将时间从分钟转化为天/小时/分钟这种类型
+export function transformTime(time){
+    const all_minute = time.toFixed(0) // 总分钟数
+    const minute = all_minute % 60 // 获得分钟数
+    const all_hour = Math.floor(all_minute / 60) // 总小时数，直接去尾，余下的分钟数在上一行计算
+    const hour = all_hour % 12 // 获得小时数
+    const day = Math.floor(all_hour / 12)
+    return {day:day, hour:hour, minute:minute}
 }
 
 

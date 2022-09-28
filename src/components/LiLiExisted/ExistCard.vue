@@ -8,7 +8,11 @@
                     <span>基本信息</span>
                 </div>
             </template>
-            <Attributes :lili_flag="'attribute'" :lili_item="current_lili" :image_flag="true" />
+            <el-scrollbar>
+                <div class="attributes">
+                    <Attributes :lili_flag="'attribute'" :custom_flag="true" :lili_item="current_lili" :image_flag="true" />
+                </div>
+            </el-scrollbar>
         </el-card>
         <el-card class="box-card">
             <template #header>
@@ -18,7 +22,11 @@
                     <span>详细信息</span>
                 </div>
             </template>
-            <Attributes :lili_flag="'details'" :lili_item="current_lili" />
+            <el-scrollbar>
+                <div class="attributes">
+                    <Attributes :lili_flag="'details'" :lili_item="current_lili" :long_flag="true" />
+                </div>
+            </el-scrollbar>
         </el-card>
     </div>
     <div v-else>
@@ -83,12 +91,17 @@
 </script>
 <style scoped>
     .box-card {
-        margin-bottom: 10px;
-        background: rgb(234, 242, 249);
+        margin-bottom: 6px;
+        background: rgb(234, 242, 249, 0.9);
         border-style: solid;
-        border-width: 1px;
+        border-width: 3px;
         border-color: black;
-        width: 100%;
+        border-radius:10px 10px 10px 10px;
+    }
+    :deep(.el-card__header) {
+        border-bottom-style: solid;
+        border-bottom-width: 3px;
+        border-bottom-color: rgb(234, 242, 249);
     }
     .card-header {
         /* 这三项组合代表元素横向排布并居中对齐 */
@@ -99,10 +112,8 @@
     .card-title {
         font-weight: bold;
     }
-    .card-comment-content {
-        margin-right: 0px;
+    .attributes {
+        width: 100%;
         height: 200px;
-        overflow-y: auto;
-        overflow-x: hidden;
     }
 </style>

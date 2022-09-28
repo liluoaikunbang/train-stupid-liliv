@@ -2,7 +2,7 @@
     <div class="item" v-if="flag">
         <div class="item-content">
             <span class="item-information">编号：{{ lili_item.num }}</span>
-            <span class="item-information">姓名：{{ lili_item.name }}</span>
+            <span class="item-information">位置：{{ lili_item.whereabouts.place }}</span>
         </div>
         <div class="item-button">
             <el-button type="success" round class="button" v-if="choose_flag" @click="clickChoose">选择该笨笨</el-button>
@@ -18,6 +18,7 @@
 <script>
     import { reactive, watch, toRefs } from 'vue'
     import { useStore } from 'vuex'
+    import { addLog } from '../LogArea/LogUtils'
     export default {
         name:"exist_item",
         props:['flag', 'lili_item'],
@@ -36,6 +37,7 @@
             const clickChoose=()=>{
                 store.commit('changeCurrentId', props.lili_item.num)
                 store.commit('changeCurrentLiLi', props.lili_item)
+                addLog('tip', `已选中${props.lili_item.num}号笨璃璃${props.lili_item.name}。`, false)
             }
             
             // 监测全局的current_id变化，每次变化时都查看是否是当前笨璃璃被选中
@@ -60,20 +62,20 @@
         margin-left: 15px;
         margin-right: 20px;
         margin-bottom: 15px;
-        font-size: 20px;
-        width: 460px;
+        font-size: 17px;
+        width: 500px;
         height: 50px;
         display: flex;
         background: rgb(195, 225, 251);
         justify-content: space-between;
         border-style: solid;
-        border-width: 1px;
+        border-width: 2px;
         border-color: black;
-        box-shadow:5px 5px 10px 5px #ccc;
-        border-radius:10px 10px 10px 10px;
+        box-shadow:5px 5px 10px 5px rgb(193, 222, 228);
+        border-radius:15px 15px 15px 15px;
     }
     .item-content {
-        margin-top: 13px;
+        margin-top: 15px;
         margin-left: 10px;
     }
     .item-information {

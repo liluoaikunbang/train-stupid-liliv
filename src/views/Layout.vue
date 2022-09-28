@@ -8,7 +8,7 @@
                 <span class="information-content">
                     <el-tooltip class="box-item" effect="light" placement="bottom">
                         <template #content><p class="tooltip">因为主人也是要休息的，所以每日调教时间为12小时而不是24小时哦！</p></template>
-                        调教时间：{{ time.day }}天{{ time.hour }}小时{{ time.minute }}分钟
+                        时间：{{ day }}天{{ hour }}小时{{ minute }}分钟
                     </el-tooltip>
                 </span>
                 <span class="information-content">
@@ -21,70 +21,93 @@
         </div>
         <div class="right">
             <p class="name">主人：{{ name }}</p>
-            <el-button type="primary" plain @click="$router.replace('/index')">回到首页</el-button>
-            <el-button type="primary" plain @click="handleRestart">重新开始</el-button>
-            <el-button type="primary" plain @click="$router.replace('/help')">游戏帮助</el-button>
-            <el-button type="primary" plain @click="handleCode">游戏源码</el-button>
+            <el-button color="blue" type="primary" plain @click="handleDisplayLog">游戏日志</el-button>
+            <el-button color="blue" type="primary" plain @click="handleDisplayMenu">游戏菜单</el-button>
         </div>
       </el-header>
       <el-container>
         <el-aside class="common-aside" width="200px">
             <el-menu
-                background-color="none"
-                text-color="#fff"
+                background-color="rgb(195, 105, 165)"
+                text-color="black"
+                active-text-color="rgb(24, 141, 12)"
                 :router="true"
             >
                 <el-menu-item-group>
                     <el-menu-item index="/purchased">笨笨生命树</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group>
                     <el-menu-item index="/existed">笨笨收容所</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group>
                     <el-menu-item index="/trained">笨笨调教室</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group>
                     <el-menu-item index="/sold">笨笨派遣处</el-menu-item>
                 </el-menu-item-group>
-                <el-menu-item-group>
-                    <el-menu-item>笨笨商业街</el-menu-item>
-                </el-menu-item-group>
+                <el-sub-menu index="2">
+                    <template #title><p class="menu-item">笨笨商业街</p></template>
+                    <el-menu-item>冷狼杂货店</el-menu-item>
+                    <el-menu-item>夕月调教室</el-menu-item>
+                </el-sub-menu>
             </el-menu>
         </el-aside>
         <el-main>
+            <img src="../assets/background.jpg" class="background">
             <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
+    <LogDrawer />
+    <LayourDrawer />
   </div>
 </template>
 <script>
   import { reactive, toRefs, watch } from 'vue';
   import { useStore } from 'vuex'
-  import { useRouter } from 'vue-router'
-  import { onBeforeRouteUpdate } from 'vue-router';
-  import { deleteArchive, saveArchive, loadArchive } from './Archive'
+  import { useRouter, onBeforeRouteUpdate } from 'vue-router'
+  import { assignObject, transformTime, changeLiLisState } from '../utils';
+  import LogDrawer from '../components/LogArea/LogDrawer.vue'
+  import LayourDrawer from '../components/Layout/LayoutDrawer.vue'
   export default{
     name:"home",
+    components:{
+        LogDrawer,
+        LayourDrawer,
+    },
     setup() {
         const store = useStore()
         const router = useRouter()
 
-        const data = reactive({
-            time:store.state.time,
-            money:store.state.money,
-            name:store.state.name,
+        // 跳转页面前的操作（使用路由守卫实现）
+        onBeforeRouteUpdate((to) => {
+            // 如果当前存在被调教的笨璃璃，则替换本地对应的笨璃璃信息。
+            if(store.state.current_id!=null){
+                changeLiLisState(store.state.current_id, store.state.current_lili)
+            }
         })
+        // 刷新，关闭页面前提示是否存档
+        // window.onbeforeunload = e => {
+        //     // return '' // 加入这句则会在页面刷新前弹出提示
+        // }
 
-        // 读档并初始化数据
-        loadArchive()
-        data.time = store.state.time
+        const data = reactive({
+            day:0,
+            hour:0,
+            minute:0,
+            money:100,
+            name:'',
+        })
+        
+
+        // 初始化数据
+        let time_object = assignObject(transformTime(store.state.time))
+        data.day = time_object.day
+        data.hour = time_object.hour
+        data.minute = time_object.minute
         data.money = store.state.money
         data.name = store.state.name
 
         // 监听全局属性变化，随时更改页面中全局数据的值
         watch(() => store.state.time, (val, old) => {
-            data.time = val
+            time_object = assignObject(transformTime(val))
+            data.day = time_object.day
+            data.hour = time_object.hour
+            data.minute = time_object.minute
         })
         watch(() => store.state.money, (val, old) => {
             data.money = val
@@ -93,31 +116,19 @@
             data.name = val
         })
 
-        // 重新开始。清除本地信息并刷新页面
-        const handleRestart=()=>{
-            router.push('/index')
-            store.commit('restartState')
-            deleteArchive()
+        // 游戏日志，打开日志
+        const handleDisplayLog=()=>{
+            store.commit('changeLogDisplayFlag', true)
         }
-        // 游戏源码，跳转到指定页面
-        const handleCode=()=>{
-            window.open('https://github.com/liluoaikunbang/train-stupid-liliv')
-        }
-
-        // 跳转页面前存档（使用路由守卫实现）
-        onBeforeRouteUpdate((to) => {
-            saveArchive()
-        })
-        // 刷新，关闭页面前存档
-        window.onbeforeunload = e => {
-            saveArchive()
-            // return '' // 加入这句则会在页面刷新前弹出提示
+        // 游戏菜单，打开菜单
+        const handleDisplayMenu=()=>{
+            store.commit('changeMenuDisplayFlag', true)
         }
 
         return {
             ...toRefs(data), //toRefs函数让模板中直接使用data中的内容而不用加data.
-            handleRestart,
-            handleCode,
+            handleDisplayLog,
+            handleDisplayMenu,
         }
     }
   }
@@ -133,34 +144,43 @@
         align-items: center;
     }
     .el-container{
-    height: 100vh;
+        height: 100vh;
     }
     .common-header{
-        background: rgb(39, 45, 53);
+        background: rgb(187, 93, 149);
         display: flex;
     }
     .common-aside{
-        background: rgb(48, 55, 65);
+        background: rgb(195, 105, 165);
     }
     .el-main{
-        background: rgb(219, 231, 249);
+        /* background: rgb(233, 220, 176); */
         padding: 0;
         margin: 0;
     }
+    .background{
+        width: 100%;
+        color: rgb(24, 141, 12);
+        height: 100%;
+        opacity: 1;
+        /* 背景置于底层 */
+        position: absolute;
+        z-index: -1;
+    }
     .title{
-        color: white;
+        color: black;
         font-size: 30px;
     }
     .title-information{
         position: absolute;
         left: 15%;
-        color: white;
+        color: black;
         font-size: 20px;
     }
     .information-content{
         margin-right: 15px;
     }
-    .el-menu-item {
+    .el-menu-item, .menu-item {
         font-size: 20px;
     }
     .right{
@@ -169,7 +189,7 @@
         align-items: center;
     }
     .name{
-        color: white;
+        color: black;
         font-size: 20px;
         margin-right: 30px;
     }

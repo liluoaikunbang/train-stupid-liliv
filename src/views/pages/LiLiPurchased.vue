@@ -27,7 +27,11 @@
     }
 </script>
 <style scoped>
+    .cards {
+        margin-top: 5px;
+        margin-left: 50px;
+    }
     .card-item{
-        margin: 5px;
+        margin: 0px;
     }
 </style>

@@ -23,9 +23,10 @@
     import { reactive } from 'vue'
     import { useStore } from 'vuex'
     import { ElMessageBox } from 'element-plus'
-    import { assignObject, randomInt } from '../utils'
+    import { assignObject, randomInt, addMoney } from '../utils'
     import { randomCpus, init_attributes } from './Attributes/Attributes'
     import Attributes from './Attributes/Attributes.vue'
+    import { addLog } from './LogArea/LogUtils'
 
     export default {
         name:"card_purchase",
@@ -36,8 +37,7 @@
             const store = useStore()
 
             // data调取初始化的笨璃璃属性，注意这里需要循环key赋值，直接=会传入地址，导致笨璃璃属性全部指向同一个变量。
-            let data_object = assignObject(init_attributes)
-            const data = reactive(data_object)
+            const data = reactive(assignObject(init_attributes))
 
             const flag = reactive({
                 purchase:false // 是否购买该笨璃璃的信号
@@ -68,12 +68,14 @@
                     ElMessageBox.alert('笨璃璃姓名不能为空，请先填写姓名。', '错误', {confirmButtonText: '好的'})
                     return
                 }
+                if(!addMoney(-50)){ // 金币不足则直接return
+                    return
+                }
 
                 // 确定目前的笨璃璃数量，如果为0则新建数组来保存笨璃璃
                 let lilis = store.state.lilis
                 if(lilis){
-                    // 在金币的限制下，max_lili可以暂时不用了
-                    // 最多同时存在max_lili只笨璃璃，如果超过则不能购买，并给出提示。
+                    // 最多同时存在max_lili只未派遣的笨璃璃，如果超过则不能购买，并给出提示。
                     // if(lilis.length >= hyperParameters.max_lili){
                     //     alert(`最多同时拥有${hyperParameters.max_lili}只笨璃璃，请先调教已有的笨璃璃哦。`)
                     //     return
@@ -91,9 +93,9 @@
                 lilis.push(assignObject(data))
                 store.commit('changeLiLis', lilis)
 
-                // 改变信号，让样式中显示为已购买
+                // 改变信号，让样式中显示为已购买，并减少球币
                 flag.purchase = true
-                console.log(`成功购买${data.num}号笨璃璃${data.name}`)
+                addLog('tip', `成功购买${data.num}号笨璃璃${data.name}，花费50球币`, true)
             }
 
             return {
@@ -107,11 +109,17 @@
 </script>
 <style scoped>
     .el-card {
-        background: rgb(234, 242, 249);
+        background: rgb(234, 242, 249, 0.9);
         border-style: solid;
-        border-width: 1px;
+        border-width: 3px;
         border-color: black;
         width: 100px;
+        border-radius:10px 10px 10px 10px;
+    }
+    :deep(.el-card__header) {
+        border-bottom-style: solid;
+        border-bottom-width: 3px;
+        border-bottom-color: rgb(234, 242, 249);
     }
     .card-header {
         /* 这三项组合代表元素横向排布并居中对齐 */

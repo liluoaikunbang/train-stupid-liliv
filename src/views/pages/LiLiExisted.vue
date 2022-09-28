@@ -9,16 +9,16 @@
                 <div v-else>
                     <ExistItem :flag="false" />
                 </div>
-                <h1>已收藏</h1>
-                <div v-if="favorite_lilis.length">
-                    <ExistItem v-for="item in favorite_lilis" :key="item.num" :flag="true" :lili_item="item" />
+                <h1>派遣中</h1>
+                <div v-if="dispatch_lilis.length">
+                    <ExistItem v-for="item in dispatch_lilis" :key="item.num" :flag="true" :lili_item="item" />
                 </div>
                 <div v-else>
                     <ExistItem :flag="false" />
                 </div>
-                <h1>派遣中</h1>
-                <div v-if="dispatch_lilis.length">
-                    <ExistItem v-for="item in dispatch_lilis" :key="item.num" :flag="true" :lili_item="item" />
+                <h1>已收藏</h1>
+                <div v-if="favorite_lilis.length">
+                    <ExistItem v-for="item in favorite_lilis" :key="item.num" :flag="true" :lili_item="item" />
                 </div>
                 <div v-else>
                     <ExistItem :flag="false" />
@@ -46,20 +46,20 @@
             const data = reactive({
                 lilis:store.state.lilis,
                 dorm_lilis:[], // 未派遣
-                favorite_lilis:[], // 已收藏
                 dispatch_lilis:[], // 派遣中
+                favorite_lilis:[], // 已收藏
             })
 
             if(data.lilis.length){
                 for(let i=0; i<data.lilis.length; i++){
-                    if(data.lilis[i].whereabouts == '未派遣'){
+                    if(data.lilis[i].whereabouts.state == '未派遣'){
                         data.dorm_lilis.push(data.lilis[i])
                     }
-                    if(data.lilis[i].whereabouts == '已收藏'){
-                        data.favorite_lilis.push(data.lilis[i])
-                    }
-                    if(data.lilis[i].whereabouts == '派遣中'){
+                    if(data.lilis[i].whereabouts.state == '派遣中'){
                         data.dispatch_lilis.push(data.lilis[i])
+                    }
+                    if(data.lilis[i].whereabouts.state == '已收藏'){
+                        data.favorite_lilis.push(data.lilis[i])
                     }
                 }
             }
@@ -76,20 +76,22 @@
         justify-content: space-between;
     }
     .left {
-        width: 500px;
+        width: 540px;
         height: 85vh;
         margin-left: 50px;
         margin-top: 20px;
-        background: rgb(234, 242, 249);
+        background: rgb(234, 242, 249, 0.9);
         border-style: solid;
-        border-width: 1px;
+        border-width: 3px;
         border-color: black;
         overflow-y: auto;
         overflow-x: hidden;
+        border-radius:10px 10px 10px 10px;
     }
     .right {
         width: 50%;
         margin-right: 50px;
         margin-top: 20px;
+        height: 85vh;
     }
 </style>
